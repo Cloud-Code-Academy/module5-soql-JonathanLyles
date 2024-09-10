@@ -70,7 +70,7 @@ public with sharing class SOQL {
      */
     public static List<Opportunity> getClosedWonOpportunityCountByAccount (Id accountId) {
     //  The body of the method
-        return [SELECT Name, Amount, StageName FROM Opportunity WHERE AccountId = :accountId];
+        return [SELECT Name, Amount, StageName, AccountId, CloseDate FROM Opportunity WHERE AccountId = :accountId AND StageName = 'Closed Won'];
     }
 
     /**
