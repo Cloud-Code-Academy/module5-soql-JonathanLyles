@@ -149,9 +149,12 @@ public with sharing class SOQL {
      * @return A list of Lead records.
      * Update the corresponding test class and testGetLeadsBySourceOrTitle method to cover this method
      */
-    //[public | private ] [static] data_type method_name (input parameters) {
+    public static List<Lead> getLeadsBySourceOrTitle (String leadSource, String keyword) {
     //  The body of the method
-    //}    
+        String keywordParam = '%' + keyword + '%';
+        return [SELECT Phone, Email, LastName, Title, Company FROM Lead WHERE (Title LIKE :keywordParam OR LeadSource = :leadSource)];
+         
+    }    
 
     /**
      * Question 11
