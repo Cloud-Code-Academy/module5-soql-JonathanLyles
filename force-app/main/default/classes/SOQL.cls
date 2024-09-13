@@ -93,9 +93,18 @@ public with sharing class SOQL {
      * @return A map of Task Ids to Task records.
      * Update the corresponding test class and testGetTasksDueNextWeek method to cover this method
      */
-    //[public | private ] [static] data_type method_name (input parameters) {
+    public static Map<Id, Task> getTasksDueNextWeek () {
+        Map<Id,Task> result = new Map<Id, Task>();
     //  The body of the method
-    //}
+    Date lessThanSevenDaysFromNow = Date.today().addDays(7);
+    List<Task> getTasks = [SELECT Id FROM Task WHERE ActivityDate <= :lessThanSevenDaysFromNow];
+    for(Task getTask : getTasks){
+        result.put(getTask.Id,getTask);
+    }
+    System.debug(result);
+    return result;
+    
+    }
 
     /**
      * Question 7
