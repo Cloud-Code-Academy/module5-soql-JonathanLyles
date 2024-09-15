@@ -198,7 +198,7 @@ public with sharing class SOQL {
      * @return A list of the first 10 Accounts ordered by Name.
      */
     public static List<Account> getFirstTenAccounts() {
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Name FROM Account ORDER BY Name LIMIT 10]; // Replace null with the variable you used to store the result
     }
     
     /**
@@ -207,7 +207,7 @@ public with sharing class SOQL {
      * @return A list of Opportunities with an Amount greater than 100,000, ordered by CloseDate, and limited to 5 records.
      */
     public static List<Opportunity> getHighValueOpportunities() {
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Id, CloseDate, Amount FROM Opportunity WHERE Amount > 100000 ORDER BY CloseDate LIMIT 5]; // Replace null with the variable you used to store the result
     }
     
     /**
@@ -216,7 +216,7 @@ public with sharing class SOQL {
      * @return A list of Contacts
      */
     public static List<Contact> getBirthdateContacts() {
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Id, Name, BirthDate FROM Contact ORDER BY BirthDate DESC LIMIT 3]; // Replace null with the variable you used to store the result
     }
     
     /**
@@ -225,7 +225,7 @@ public with sharing class SOQL {
      * @return A list of Cases
      */
     public static List<Case> getCasesWithStatus() {
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Id, CreatedDate, Status, Subject FROM Case WHERE Status = 'Open' ORDER BY CreatedDate  LIMIT 10 OFFSET 5]; // Replace null with the variable you used to store the result
     }
 
     /**
