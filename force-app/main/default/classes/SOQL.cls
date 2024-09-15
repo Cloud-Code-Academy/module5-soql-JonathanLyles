@@ -299,11 +299,12 @@ public with sharing class SOQL {
      */
     public static List<Contact> getAccountsWithContactsByState(Id accountId) {
         // Query the Account
-
+        Account acc = [SELECT BillingState FROM Account WHERE Id = :accountId];
         // Store the Account's BillingState
+        String accBillingState = acc.BillingState;
 
         // Query the Contacts
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Id FROM Contact WHERE MailingState = :accBillingState];
     }
 
     /**
@@ -316,20 +317,24 @@ public with sharing class SOQL {
      */
     public static List<Account> findAccountsByLeadEmailDomains(Set<Id> leadIds) {
         // Query the Leads
+        List<Lead> passedLeads = [SELECT Id, Email FROM Lead WHERE Id IN :leadIds];
 
         // Create a set of email domains from the Leads
-
-        // Loop through each Lead
-
+        Set<String> domains = new Set<String>();
+         // Loop through each Lead
+         System.debug('All passed Leads' + passedLeads);
+        for(Lead passedLead : passedLeads){
             // Get the email from the Lead
-
             // Check if the email is not null
-
+            if(passedLead.Email != null){
+                Integer atPosition = passedLead.Email.indexOf('@') + 1;
+                String emailDomain = 'www.' + passedLead.Email.substring(atPosition);
                 // Add the email domain to the set
-
-        
+                domains.add(emailDomain);
+            }  
+        }
         // Query the Accounts
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Id, Website FROM Account WHERE Website IN :domains]; // Replace null with the variable you used to store the result
     }
 
     /**
