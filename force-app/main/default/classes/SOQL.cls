@@ -237,14 +237,15 @@ public with sharing class SOQL {
      */
     public static Set<Id> getCaseIdsByAccount(Id accountId) {
         // Create a set to hold the Case Ids
+        Set<Id> caseIds = new Set<Id>();
 
         // Query the Cases
         // Loop through each Case and add the Id to the set
-        //for () {
-        //    
-        //}
+        for (Case cas : [SELECT Id FROM Case WHERE AccountId = :accountId]) {
+            caseIds.add(cas.Id);
+        }
 
-        return null; // Replace null with the variable you used to store the result
+        return caseIds; // Replace null with the variable you used to store the result
     }
 
     /**
@@ -260,8 +261,10 @@ public with sharing class SOQL {
 
         // Query the Accounts
         // Loop through each Account and add the Id and Name to the map
-
-        return null; // Replace null with the variable you used to store the result
+        for(Account acc : [SELECT BillingCountry, Id, Name FROM Account WHERE BillingCountry != :country]){
+            accountIdsToNames.put(acc.Id,acc.Name);
+        }
+        return accountIdsToNames; // Replace null with the variable you used to store the result
     }
 
     /**
@@ -272,7 +275,8 @@ public with sharing class SOQL {
      * @return The Account Name of the Contact.
      */
     public static String getAccountNameForContact(String contactId) {
-        return null; // Replace null with the variable you used to store the result
+        Contact con = [SELECT Account.Name FROM Contact WHERE Id = :contactId LIMIT 1];
+        return con.Account.Name;
     }    
 
     /**
@@ -283,7 +287,7 @@ public with sharing class SOQL {
      * @return An Account record with related Opportunities.
      */
     public static Account getAccountAndOpportunitiesFromAccountId(Id accountId) {
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Name, (SELECT Id, Name FROM Opportunities) FROM Account WHERE Id = :accountId]; 
     }
 
     /**
