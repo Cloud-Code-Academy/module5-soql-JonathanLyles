@@ -347,18 +347,32 @@ public with sharing class SOQL {
      */
     public static void cloneLineItems(Id origOppId, List<Id> cloneOppIds) {
         // Query the original Opportunity Line Items
-
+        List<OpportunityLineItem> origOppLineItems = [SELECT Id, Quantity, UnitPrice, PricebookEntryId FROM OpportunityLineItem WHERE OpportunityId = :origOppid];
+       
         // Create a list to hold the new line items
+        List<OpportunityLineItem> clonedOppLineItems = new List<OpportunityLineItem>();
 
         // Generate a random number between 1 and 3
-
+        Integer randomNumber = Math.round(1 + Math.random()*3);
+        
         // Loop through each cloned Opportunity Id
-
+        for(Id cloneOppId : cloneOppIds){
+            
             // Loop through each original line item
+            for(OpportunityLineItem origOppLineItem : origOppLineItems){
 
                 // Clone the original line item and add the random number to the quantity
-
+                OpportunityLineItem cloneLineItem = new OpportunityLineItem();
+                cloneLineItem.Quantity = origOppLineItem.Quantity + randomNumber;
+                cloneLineItem.UnitPrice = origOppLineItem.UnitPrice;
+                cloneLineItem.OpportunityId = cloneOppId;
+                cloneLineItem.PricebookEntryId = origOppLineItem.PricebookEntryId;
+                //Add to the list
+                clonedOppLineItems.add(cloneLineItem);
+            }
+        }
         // Insert the new line items
+        insert clonedOppLineItems;
     }
     
     /**
@@ -368,7 +382,7 @@ public with sharing class SOQL {
      * @return A list of filtered Opportunity
      */
     public static List<Opportunity> getOpportunityDetailsForClosedWon() {        
-        return null; // Replace null with the variable you used to store the result
+        return [SELECT Name, AccountId, OwnerId FROM Opportunity WHERE StageName = 'Closed Won']; // Replace null with the variable you used to store the result
     }
 
     /**
@@ -377,18 +391,34 @@ public with sharing class SOQL {
      * Example: setPrimaryContact() should set the 'Primary_Contact__c' field for every Opportunity in the org
      */
     public static void setPrimaryContact() {
+        
         //Use the getOpportunityDetailsForClosedWon() method to get the Opportunities
+        List<Opportunity> oppList = SOQL.getOpportunityDetailsForClosedWon();
 
         // Create a set of Account Ids from the Opportunities
+        Set<Id> accIds = new Set<Id>();
+        for(Opportunity opp : oppList){
+            accIds.add(opp.AccountId);
+        }
 
+        Map<Id,Id> accountToContactMap = new Map<Id,Id>();
         // Query the Contacts
+        List<Contact> conList = [SELECT Id, AccountId FROM Contact WHERE AccountId IN :accIds];
 
         // Loop through each Contact and add the Account Id and Contact to the map
+        for(Contact con : conList){
+            accountToContactMap.put(con.AccountId,con.Id);
+        }
         
         // Loop through each Opportunity
+        for(Opportunity opp : oppList){
+            // Update the Opportunity primary contact from accountToContactMap
+            opp.Primary_Contact__c = accountToContactMap.get(opp.AccountId);
+        }
 
-                // Update the Opportunity primary contact from accountToContactMap
+       
 
         // Update the Opportunities
+        update oppList;
     }
 }
